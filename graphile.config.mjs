@@ -8,6 +8,16 @@ import { PgManyToManyPreset } from "@graphile-contrib/pg-many-to-many";
 // import { PgSimplifyInflectionPreset } from "@graphile/simplify-inflection";
 import PersistedPlugin from "@grafserv/persisted";
 import { PgOmitArchivedPlugin } from "@graphile-contrib/pg-omit-archived";
+import { makeExtendSchemaPlugin } from "graphile-utils";
+import { gql } from "postgraphile/utils";
+
+const AddDirectivePlugin = makeExtendSchemaPlugin(() => {
+  return {
+    typeDefs: gql`
+      directive @foobar(x: Int!) on FIELD_DEFINITION
+    `,
+  };
+});
 
 // For configuration file details, see: https://postgraphile.org/postgraphile/next/config
 
@@ -25,7 +35,11 @@ const preset = {
     PgAggregatesPreset,
     // PgSimplifyInflectionPreset
   ],
-  plugins: [PersistedPlugin.default, PgOmitArchivedPlugin],
+  plugins: [
+    PersistedPlugin.default,
+    PgOmitArchivedPlugin,
+    AddDirectivePlugin,
+  ],
   pgServices: [
     makePgService({
       // Database connection string:
